@@ -16,7 +16,7 @@ let ranks = [
 let suits = ['spades', 'heart', ' clubs', 'diamonds']
 let deck = []
 let playingCards = []
-let numberPlayers = 5
+let numberPlayers = 2
 
 const main = () => {
   if (document.querySelector('h1.hello-world')) {
@@ -25,6 +25,9 @@ const main = () => {
   fillDeck()
   ShuffleDeck()
   startGame()
+  hit(0)
+  verifierBust()
+  verifierBust(0)
 }
 // 1. Fill my deck
 const fillDeck = () => {
@@ -39,7 +42,6 @@ const fillDeck = () => {
       deck.push(card)
     }
   }
-  console.log(deck)
 }
 
 const findCardValue = valueCard => {
@@ -107,8 +109,7 @@ const startGame = () => {
   for (let i = 0; i < numberPlayers; i++) {
     for (let j = 0; j < 2; j++) {
       const player = {
-        type: i < numberPlayers - 1 ? 'p' : 'd',
-        order: i,
+        hand: i,
         cards: deck[0]
       }
 
@@ -121,6 +122,27 @@ const startGame = () => {
 }
 // **************************************************************************************
 // 4.Hit the deck
+const hit = whoseHand => {
+  const player = {
+    hand: whoseHand,
+    cards: deck[0]
+  }
+  playingCards.push(player)
+  deck.shift()
+  console.log(playingCards)
+}
+// **************************************************************************************
+// 5. Verifier Bust
+const verifierBust = whoseHand => {
+  let total = 0
+  playingCards.forEach(function(element) {
+    if (element.hand === whoseHand) {
+      total += element.cards.value
+    }
+  })
+  console.log(total)
+}
+
 // **************************************************************************************
 
 document.addEventListener('DOMContentLoaded', main)
