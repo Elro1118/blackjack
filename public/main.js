@@ -15,8 +15,8 @@ let ranks = [
 ]
 let suits = ['spades', 'heart', ' clubs', 'diamonds']
 let deck = []
-let dealerCards = []
-let playerCards = []
+let playingCards = []
+let numberPlayers = 5
 
 const main = () => {
   if (document.querySelector('h1.hello-world')) {
@@ -24,7 +24,7 @@ const main = () => {
   }
   fillDeck()
   ShuffleDeck()
-  dealDeck()
+  startGame()
 }
 // 1. Fill my deck
 const fillDeck = () => {
@@ -102,23 +102,25 @@ const ShuffleDeck = () => {
   console.log(deck)
 }
 // **************************************************************************************
-// 3.Deal the deck
-const dealDeck = () => {
-  let i = 0
-  let j = 0
-  while (i < 2) {
-    playerCards.push(deck[0])
-    deck.shift()
-    i++
+// 3.Start the Game
+const startGame = () => {
+  for (let i = 0; i < numberPlayers; i++) {
+    for (let j = 0; j < 2; j++) {
+      const player = {
+        type: i < numberPlayers - 1 ? 'p' : 'd',
+        order: i,
+        cards: deck[0]
+      }
+
+      playingCards.push(player)
+      deck.shift()
+    }
   }
-  while (j < 2) {
-    dealerCards.push(deck[0])
-    deck.shift()
-    j++
-  }
-  console.log(playerCards)
-  console.log(dealerCards)
+
+  console.log(playingCards)
 }
+// **************************************************************************************
+// 4.Hit the deck
 // **************************************************************************************
 
 document.addEventListener('DOMContentLoaded', main)
