@@ -13,7 +13,7 @@ let ranks = [
   'King',
   'Ace'
 ]
-let suits = ['spades', 'heart', ' clubs', 'diamonds']
+let suits = ['spades', 'hearts', 'clubs', 'diamonds']
 let deck = []
 let playingCards = []
 let numberPlayers = 2
@@ -26,8 +26,7 @@ const main = () => {
   ShuffleDeck()
   startGame()
   hit(0)
-  verifierBust()
-  verifierBust(0)
+  verifierWhoWin(0)
 }
 // 1. Fill my deck
 const fillDeck = () => {
@@ -117,32 +116,49 @@ const startGame = () => {
       deck.shift()
     }
   }
-
-  console.log(playingCards)
+  displayCard()
 }
 // **************************************************************************************
 // 4.Hit the deck
 const hit = whoseHand => {
+  let total = 0
   const player = {
     hand: whoseHand,
     cards: deck[0]
   }
   playingCards.push(player)
+  total = verifierWhoWin(whoseHand)
+  if (total > 21) {
+    return 'BUST!'
+  } else if (total === 21) {
+    return 'WIN!'
+  }
+
   deck.shift()
-  console.log(playingCards)
 }
 // **************************************************************************************
 // 5. Verifier Bust
-const verifierBust = whoseHand => {
+const verifierWhoWin = whoseHand => {
   let total = 0
   playingCards.forEach(function(element) {
     if (element.hand === whoseHand) {
       total += element.cards.value
     }
   })
-  console.log(total)
+  return total
 }
 
 // **************************************************************************************
-
+// 6. Display card
+const displayCard = () => {
+  playingCards.forEach(function(element) {
+    let img = document.createElement('img')
+    img.src = element.cards.image
+    console.log(img)
+    document.querySelector('.table1').appendChild(img)
+  })
+}
+// **************************************************************************************
 document.addEventListener('DOMContentLoaded', main)
+
+document.querySelector('.startButton').addEventListener('click', startGame)
