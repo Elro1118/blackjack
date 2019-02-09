@@ -17,24 +17,21 @@ let suits = ['spades', 'hearts', 'clubs', 'diamonds']
 let deck = []
 let playingCards = []
 let numberPlayers = 2
+let turnPlayer = 0
 
 const main = () => {
   if (document.querySelector('h1.hello-world')) {
     document.querySelector('h1.hello-world').textContent = 'Hello, World!'
   }
-  fillDeck()
-  ShuffleDeck()
-  startGame()
-  hit(0)
-  verifierWhoWin(0)
 }
+
 // 1. Fill my deck
 const fillDeck = () => {
   for (let i = 0; i < ranks.length; i++) {
     for (let j = 0; j < suits.length; j++) {
       const card = {
-        image: 'images' + '/' + ranks[i] + '_of_' + suits[j] + '.svg',
-        value: findCardValue(ranks[i]),
+        imageCard: 'images' + '/' + ranks[i] + '_of_' + suits[j] + '.svg',
+        valueCard: findCardValue(ranks[i]),
         suit: suits[j],
         rank: ranks[i]
       }
@@ -100,34 +97,36 @@ const ShuffleDeck = () => {
     deck[j] = deck[i]
     deck[i] = temp
   }
-  console.log(deck)
 }
 // **************************************************************************************
 // 3.Start the Game
 const startGame = () => {
+  fillDeck()
+  ShuffleDeck()
   for (let i = 0; i < numberPlayers; i++) {
     for (let j = 0; j < 2; j++) {
       const player = {
         hand: i,
         cards: deck[0]
       }
-
       playingCards.push(player)
       deck.shift()
     }
   }
-  displayCard()
+
+  displayCards(turnPlayer)
+  document.querySelector('.startButton').disabled = true
 }
 // **************************************************************************************
 // 4.Hit the deck
-const hit = whoseHand => {
+const hitDeck = () => {
   let total = 0
   const player = {
-    hand: whoseHand,
+    hand: turnPlayer,
     cards: deck[0]
   }
   playingCards.push(player)
-  total = verifierWhoWin(whoseHand)
+  total = verifierWhoWin(turnPlayer)
   if (total > 21) {
     return 'BUST!'
   } else if (total === 21) {
@@ -142,23 +141,49 @@ const verifierWhoWin = whoseHand => {
   let total = 0
   playingCards.forEach(function(element) {
     if (element.hand === whoseHand) {
-      total += element.cards.value
+      console.log(element)
+      total += element.cards.valueCard
     }
   })
+  // for (let index = 0; index < playingCards.length; index++) {
+  //   if (playingCards[index].hand === whoseHand) {
+  //     console.log(playingCards[index].cards)
+  //     total += 0
+  //   }
+  // }
   return total
 }
 
 // **************************************************************************************
 // 6. Display card
-const displayCard = () => {
+const displayCards = whoseHand => {
   playingCards.forEach(function(element) {
-    let img = document.createElement('img')
-    img.src = element.cards.image
-    console.log(img)
-    document.querySelector('.table1').appendChild(img)
+    if (element.hand === whoseHand) {
+      let imageRoot = document.createElement('img')
+      imageRoot.src = element.cards.imageCard
+      let imageSection = document.createElement('section')
+      imageSection.appendChild(imageRoot)
+      if (element.hand < numberPlayers - 1) {
+        document.querySelector('.FirstSubSection').appendChild(imageRoot)
+      } else {
+        document.querySelector('.table2').appendChild(imageRoot)
+      }
+    }
   })
+}
+// **************************************************************************************
+// 7. Stand
+const stand = () => {
+  turnPlayer++
+  hitDeck(turnPlayer)
+  displayCards(turnPlayer)
+  document.querySelector('.startButton').disabled = false
 }
 // **************************************************************************************
 document.addEventListener('DOMContentLoaded', main)
 
 document.querySelector('.startButton').addEventListener('click', startGame)
+// document
+//   .querySelector('.hitButton')
+//   .addEventListener('click', hitDeck(turnPlayer))
+document.querySelector('.standButton').addEventListener('click', stand)

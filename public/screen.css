@@ -47,7 +47,7 @@ body {
   justify-content: center;
   background: greenyellow;
 }
-#table1 {
+#table2 {
   display: flex;
   flex-flow: row wrap;
   align-content: center;
@@ -56,5 +56,5 @@ body {
 }
 
 img {
-  width: 5rem;
+  width: 2.5rem;
 }
