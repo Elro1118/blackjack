@@ -20,9 +20,11 @@ let numberPlayers = 2
 let turnPlayer = 0
 
 const main = () => {
-  if (document.querySelector('h1.hello-world')) {
-    document.querySelector('h1.hello-world').textContent = 'Hello, World!'
-  }
+  // if (document.querySelector('h1.hello-world')) {
+  //   document.querySelector('h1.hello-world').textContent = 'Hello, World!'
+  // }
+  document.querySelector('.hitButton').disabled = true
+  document.querySelector('.standButton').disabled = true
 }
 
 // 1. Fill my deck
@@ -33,7 +35,8 @@ const fillDeck = () => {
         imageCard: 'images' + '/' + ranks[i] + '_of_' + suits[j] + '.svg',
         valueCard: findCardValue(ranks[i]),
         suit: suits[j],
-        rank: ranks[i]
+        rank: ranks[i],
+        showCard: 0
       }
       deck.push(card)
     }
@@ -115,22 +118,30 @@ const startGame = () => {
   }
 
   displayCards(turnPlayer)
+  document.querySelector('.myAd').textContent = 'Lets play!'
   document.querySelector('.startButton').disabled = true
+  document.querySelector('.hitButton').disabled = false
+  document.querySelector('.standButton').disabled = false
 }
 // **************************************************************************************
 // 4.Hit the deck
 const hitDeck = () => {
   let total = 0
+  let temp = turnPlayer
+  temp++
   const player = {
     hand: turnPlayer,
     cards: deck[0]
   }
   playingCards.push(player)
+  displayCards(turnPlayer)
   total = verifierWhoWin(turnPlayer)
   if (total > 21) {
-    return 'BUST!'
+    document.querySelector('.myAd').textContent = 'Player ' + temp + ' BUST!'
+    startValues()
   } else if (total === 21) {
-    return 'WIN!'
+    document.querySelector('.myAd').textContent = 'Player ' + temp + ' WIN!'
+    startValues()
   }
 
   deck.shift()
@@ -145,12 +156,6 @@ const verifierWhoWin = whoseHand => {
       total += element.cards.valueCard
     }
   })
-  // for (let index = 0; index < playingCards.length; index++) {
-  //   if (playingCards[index].hand === whoseHand) {
-  //     console.log(playingCards[index].cards)
-  //     total += 0
-  //   }
-  // }
   return total
 }
 
@@ -158,7 +163,7 @@ const verifierWhoWin = whoseHand => {
 // 6. Display card
 const displayCards = whoseHand => {
   playingCards.forEach(function(element) {
-    if (element.hand === whoseHand) {
+    if (element.hand === whoseHand && element.cards.showCard === 0) {
       let imageRoot = document.createElement('img')
       imageRoot.src = element.cards.imageCard
       let imageSection = document.createElement('section')
@@ -168,6 +173,7 @@ const displayCards = whoseHand => {
       } else {
         document.querySelector('.table2').appendChild(imageRoot)
       }
+      element.cards.showCard = 1
     }
   })
 }
@@ -180,10 +186,25 @@ const stand = () => {
   document.querySelector('.startButton').disabled = false
 }
 // **************************************************************************************
+// 8. Start Values
+const startValues = () => {
+  turnPlayer = 0
+  numberPlayers = 2
+  while (playingCards.length) {
+    playingCards.pop()
+  }
+  while (deck.length) {
+    deck.pop()
+  }
+  document.querySelector('.startButton').disabled = false
+  document.querySelector('.hitButton').disabled = true
+  document.querySelector('.standButton').disabled = true
+  // let clearTable = document.querySelector('FirstSubSection')
+  // clearTable.childNodes[0]
+}
+// **************************************************************************************
 document.addEventListener('DOMContentLoaded', main)
 
 document.querySelector('.startButton').addEventListener('click', startGame)
-// document
-//   .querySelector('.hitButton')
-//   .addEventListener('click', hitDeck(turnPlayer))
+document.querySelector('.hitButton').addEventListener('click', hitDeck)
 document.querySelector('.standButton').addEventListener('click', stand)
