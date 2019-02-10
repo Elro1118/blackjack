@@ -18,6 +18,9 @@ let deck = []
 let playingCards = []
 let numberPlayers = 2
 let turnPlayer = 0
+let imageSection
+let total = 0
+let restart = 0
 
 const main = () => {
   // if (document.querySelector('h1.hello-world')) {
@@ -104,6 +107,9 @@ const ShuffleDeck = () => {
 // **************************************************************************************
 // 3.Start the Game
 const startGame = () => {
+  if (restart === 1) {
+    startValues()
+  }
   fillDeck()
   ShuffleDeck()
   for (let i = 0; i < numberPlayers; i++) {
@@ -116,8 +122,19 @@ const startGame = () => {
       deck.shift()
     }
   }
-
-  displayCards(turnPlayer)
+  for (let index = 0; index < numberPlayers; index++) {
+    imageSection = document.createElement('section')
+    if (index === numberPlayers - 1) {
+      imageSection.id = 'dealerSection'
+      document.querySelector('.ThirdSubSection').appendChild(imageSection)
+      console.log(imageSection)
+    } else {
+      imageSection.id = 'playerSection' + index
+      document.querySelector('.FirstSubSection').appendChild(imageSection)
+      console.log(imageSection)
+    }
+  }
+  displayCards()
   document.querySelector('.myAd').textContent = 'Lets play!'
   document.querySelector('.startButton').disabled = true
   document.querySelector('.hitButton').disabled = false
@@ -126,63 +143,79 @@ const startGame = () => {
 // **************************************************************************************
 // 4.Hit the deck
 const hitDeck = () => {
-  let total = 0
-  let temp = turnPlayer
-  temp++
   const player = {
     hand: turnPlayer,
     cards: deck[0]
   }
   playingCards.push(player)
-  displayCards(turnPlayer)
-  total = verifierWhoWin(turnPlayer)
-  if (total > 21) {
-    document.querySelector('.myAd').textContent = 'Player ' + temp + ' BUST!'
-    startValues()
-  } else if (total === 21) {
-    document.querySelector('.myAd').textContent = 'Player ' + temp + ' WIN!'
-    startValues()
-  }
-
   deck.shift()
+  displayCards()
 }
 // **************************************************************************************
 // 5. Verifier Bust
-const verifierWhoWin = whoseHand => {
-  let total = 0
+const verifierWhoWin = () => {
+  total = 0
+  let temp = turnPlayer
+
+  let typePlayer = turnPlayer < numberPlayers - 1 ? 'Player ' : 'Dealer '
+  temp++
   playingCards.forEach(function(element) {
-    if (element.hand === whoseHand) {
-      console.log(element)
+    if (element.hand === turnPlayer) {
       total += element.cards.valueCard
     }
   })
-  return total
+  if (total > 21) {
+    console.log('Player ' + turnPlayer + 'Total ' + total)
+    document.querySelector('.myAd').textContent = typePlayer + temp + ' BUST!'
+    restart = 1
+    document.querySelector('.startButton').disabled = false
+    document.querySelector('.hitButton').disabled = true
+    document.querySelector('.standButton').disabled = true
+  } else if (total === 21) {
+    console.log('Player ' + turnPlayer + 'Total ' + total)
+    document.querySelector('.myAd').textContent = typePlayer + temp + ' WIN!'
+    restart = 1
+    document.querySelector('.startButton').disabled = false
+    document.querySelector('.hitButton').disabled = true
+    document.querySelector('.standButton').disabled = true
+  }
 }
 
 // **************************************************************************************
 // 6. Display card
-const displayCards = whoseHand => {
+const displayCards = () => {
   playingCards.forEach(function(element) {
-    if (element.hand === whoseHand && element.cards.showCard === 0) {
+    if (element.hand === turnPlayer && element.cards.showCard === 0) {
       let imageRoot = document.createElement('img')
       imageRoot.src = element.cards.imageCard
-      let imageSection = document.createElement('section')
-      imageSection.appendChild(imageRoot)
+
       if (element.hand < numberPlayers - 1) {
-        document.querySelector('.FirstSubSection').appendChild(imageRoot)
+        let temp = 'playerSection' + turnPlayer
+
+        document.getElementById(temp).appendChild(imageRoot)
       } else {
-        document.querySelector('.table2').appendChild(imageRoot)
+        let temp2 = 'dealerSection'
+        document.getElementById(temp2).appendChild(imageRoot)
       }
       element.cards.showCard = 1
     }
   })
+  verifierWhoWin()
 }
 // **************************************************************************************
 // 7. Stand
 const stand = () => {
   turnPlayer++
-  hitDeck(turnPlayer)
-  displayCards(turnPlayer)
+  displayCards()
+  if (turnPlayer === numberPlayers - 1) {
+    document.querySelector('.hitButton').disabled = true
+    document.querySelector('.standButton').disabled = true
+
+    while (total <= 17) {
+      hitDeck()
+    }
+  }
+
   document.querySelector('.startButton').disabled = false
 }
 // **************************************************************************************
@@ -199,8 +232,20 @@ const startValues = () => {
   document.querySelector('.startButton').disabled = false
   document.querySelector('.hitButton').disabled = true
   document.querySelector('.standButton').disabled = true
-  // let clearTable = document.querySelector('FirstSubSection')
-  // clearTable.childNodes[0]
+  for (let index = 0; index < numberPlayers; index++) {
+    if (index === numberPlayers - 1) {
+      let elementId2 = 'dealerSection'
+      let element2 = document.getElementById(elementId2)
+      element2.parentNode.removeChild(element2)
+      // document.querySelector('.ThirdSubSection').removeChild(element2)
+    } else {
+      let elementId = 'playerSection' + index
+      console.log(elementId)
+      let element = document.getElementById(elementId)
+      element.parentNode.removeChild(element)
+      // document.querySelector('.FirstSubSection').parentNode.removeChild(element)
+    }
+  }
 }
 // **************************************************************************************
 document.addEventListener('DOMContentLoaded', main)

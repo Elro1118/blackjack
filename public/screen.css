@@ -18,6 +18,7 @@ body {
   justify-content: center;
   background: green;
   border-radius: 1rem;
+  width: 100%;
 }
 
 .FirstSubSection {
@@ -25,20 +26,19 @@ body {
   flex-flow: row wrap;
   align-content: center;
   justify-content: center;
-  background: red;
 }
 .SecondSubSection {
   display: flex;
   flex-direction: column;
   align-content: center;
   justify-content: center;
+  padding: 1rem;
 }
 .ThirdSubSection {
   display: flex;
   flex-flow: row wrap;
   align-content: center;
   justify-content: center;
-  background: blue;
 }
 #table1 {
   display: flex;
