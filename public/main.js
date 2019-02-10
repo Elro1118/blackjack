@@ -133,6 +133,7 @@ const startGame = () => {
     }
   }
   displayCards()
+  displayFirstCardDealer()
   document.querySelector('.myAd').textContent = 'Lets play!'
   document.querySelector('.startButton').disabled = true
   document.querySelector('.hitButton').disabled = false
@@ -208,6 +209,22 @@ const displayCards = () => {
   })
   verifierWhoWin()
 }
+const displayFirstCardDealer = () => {
+  let temp = playingCards[2].cards.imageCard
+  playingCards[2].cards.showCard = 1
+  let visTemp = playingCards[2].cards.showCard
+  console.log(temp + ' ' + visTemp)
+
+  let imageRoot = document.createElement('img')
+  imageRoot.src = temp
+  let temp2 = 'dealerSection'
+  document.getElementById(temp2).appendChild(imageRoot)
+
+  let imageBack = document.createElement('img')
+  imageBack.src = '/images/back.jpg'
+  let temp3 = 'dealerSection'
+  document.getElementById(temp3).appendChild(imageBack)
+}
 // **************************************************************************************
 // 7. Stand
 const stand = () => {
@@ -220,7 +237,7 @@ const stand = () => {
     while (total < 17) {
       hitDeck()
     }
-    if (total >= 17) {
+    if (total >= 17 && total < 21) {
       let tempPlayer = turnPlayer - 1
       let tempTotal = 0
 
@@ -231,16 +248,21 @@ const stand = () => {
       })
       console.log('tempPlayer: ' + tempPlayer)
       console.log('total:' + total)
-      let maxValueCard = Math.max(total, tempTotal)
-      console.log('maxValueCard: ' + maxValueCard)
-      if (maxValueCard === total) {
-        let typePlayer = 'Dealer'
-        document.querySelector('.myAd').textContent = typePlayer + ' WIN!'
+      if (total === tempTotal) {
+        document.querySelector('.myAd').textContent = 'PUSH!'
       } else {
-        tempPlayer++
-        let typePlayer = 'Player '
-        document.querySelector('.myAd').textContent = typePlayer + ' WIN!'
+        let maxValueCard = Math.max(total, tempTotal)
+        console.log('maxValueCard: ' + maxValueCard)
+        if (maxValueCard === total) {
+          let typePlayer = 'Dealer'
+          document.querySelector('.myAd').textContent = typePlayer + ' WIN!'
+        } else {
+          tempPlayer++
+          let typePlayer = 'Player '
+          document.querySelector('.myAd').textContent = typePlayer + ' WIN!'
+        }
       }
+
       restart = 1
       document.querySelector('.startButton').disabled = false
       document.querySelector('.hitButton').disabled = true
