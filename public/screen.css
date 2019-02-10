@@ -42,7 +42,7 @@ body {
   align-content: center;
   justify-content: center;
 }
-#table1 {
+.table1 {
   display: flex;
   flex-flow: row wrap;
   align-content: center;
