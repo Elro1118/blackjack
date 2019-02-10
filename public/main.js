@@ -127,11 +127,9 @@ const startGame = () => {
     if (index === numberPlayers - 1) {
       imageSection.id = 'dealerSection'
       document.querySelector('.ThirdSubSection').appendChild(imageSection)
-      console.log(imageSection)
     } else {
       imageSection.id = 'playerSection' + index
       document.querySelector('.FirstSubSection').appendChild(imageSection)
-      console.log(imageSection)
     }
   }
   displayCards()
@@ -143,11 +141,20 @@ const startGame = () => {
 // **************************************************************************************
 // 4.Hit the deck
 const hitDeck = () => {
+  // if (playingCards.length === 0) {
   const player = {
     hand: turnPlayer,
     cards: deck[0]
   }
   playingCards.push(player)
+  // } else {
+  //   playingCards.forEach(function(element) {
+  //     if (element.hand === turnPlayer) {
+  //       element.addCars(deck[0])
+  //     }
+  //   })
+  // }
+
   deck.shift()
   displayCards()
 }
@@ -156,24 +163,23 @@ const hitDeck = () => {
 const verifierWhoWin = () => {
   total = 0
   let temp = turnPlayer
-
-  let typePlayer = turnPlayer < numberPlayers - 1 ? 'Player ' : 'Dealer '
   temp++
+  let typePlayer = turnPlayer < numberPlayers - 1 ? 'Player ' + temp : 'Dealer '
+
   playingCards.forEach(function(element) {
     if (element.hand === turnPlayer) {
       total += element.cards.valueCard
     }
   })
+  console.log(total)
   if (total > 21) {
-    console.log('Player ' + turnPlayer + 'Total ' + total)
-    document.querySelector('.myAd').textContent = typePlayer + temp + ' BUST!'
+    document.querySelector('.myAd').textContent = typePlayer + ' BUST!'
     restart = 1
     document.querySelector('.startButton').disabled = false
     document.querySelector('.hitButton').disabled = true
     document.querySelector('.standButton').disabled = true
   } else if (total === 21) {
-    console.log('Player ' + turnPlayer + 'Total ' + total)
-    document.querySelector('.myAd').textContent = typePlayer + temp + ' WIN!'
+    document.querySelector('.myAd').textContent = typePlayer + ' WIN!'
     restart = 1
     document.querySelector('.startButton').disabled = false
     document.querySelector('.hitButton').disabled = true
@@ -211,8 +217,34 @@ const stand = () => {
     document.querySelector('.hitButton').disabled = true
     document.querySelector('.standButton').disabled = true
 
-    while (total <= 17) {
+    while (total < 17) {
       hitDeck()
+    }
+    if (total >= 17) {
+      let tempPlayer = turnPlayer - 1
+      let tempTotal = 0
+
+      playingCards.forEach(function(element) {
+        if (element.hand === tempPlayer) {
+          tempTotal += element.cards.valueCard
+        }
+      })
+      console.log('tempPlayer: ' + tempPlayer)
+      console.log('total:' + total)
+      let maxValueCard = Math.max(total, tempTotal)
+      console.log('maxValueCard: ' + maxValueCard)
+      if (maxValueCard === total) {
+        let typePlayer = 'Dealer'
+        document.querySelector('.myAd').textContent = typePlayer + ' WIN!'
+      } else {
+        tempPlayer++
+        let typePlayer = 'Player '
+        document.querySelector('.myAd').textContent = typePlayer + ' WIN!'
+      }
+      restart = 1
+      document.querySelector('.startButton').disabled = false
+      document.querySelector('.hitButton').disabled = true
+      document.querySelector('.standButton').disabled = true
     }
   }
 
@@ -237,13 +269,11 @@ const startValues = () => {
       let elementId2 = 'dealerSection'
       let element2 = document.getElementById(elementId2)
       element2.parentNode.removeChild(element2)
-      // document.querySelector('.ThirdSubSection').removeChild(element2)
     } else {
       let elementId = 'playerSection' + index
-      console.log(elementId)
+
       let element = document.getElementById(elementId)
       element.parentNode.removeChild(element)
-      // document.querySelector('.FirstSubSection').parentNode.removeChild(element)
     }
   }
 }
